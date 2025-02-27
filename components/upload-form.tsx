@@ -26,7 +26,7 @@ import {
 export default function UploadForm() {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const inputFileRef = useRef<HTMLInputElement>(null);
 
