@@ -81,8 +81,6 @@ export async function processCSV(formData: FormData): Promise<string> {
           // maxTokens: 1024,
         });
 
-        console.log('AI Response:', aiResponse);
-
         const cleansedResponse = removeJsonTemplate(aiResponse);
 
         // Parse the AI response and update the row
