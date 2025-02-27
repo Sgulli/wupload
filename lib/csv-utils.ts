@@ -162,7 +162,9 @@ export function jsonToCSV(input: string | Record<string, unknown>[]): string {
     headers.forEach((header) => {
       row[header] =
         item[header] !== undefined && item[header] !== null
-          ? String(item[header])
+          ? typeof item[header] === 'object'
+            ? JSON.stringify(item[header])
+            : String(item[header])
           : '';
     });
     return row;
