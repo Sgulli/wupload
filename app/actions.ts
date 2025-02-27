@@ -45,7 +45,8 @@ export async function processCSV(formData: FormData): Promise<string> {
         header.toLowerCase().includes('variant is') ||
         header.toLowerCase().includes('option') ||
         header.toLowerCase().includes('variant') ||
-        header.toLowerCase().includes('id')
+        header.toLowerCase().includes('id') ||
+        header.toLowerCase().includes('url')
     );
 
     // Process each row with missing data
@@ -132,7 +133,8 @@ export async function processCSV(formData: FormData): Promise<string> {
 
 function createWinePrompt(
   wineDescription: string,
-  missingFields: string
+  missingFields: string,
+  language = 'Italian'
 ): string {
   return `You are an expert sommelier and wine specialist with extensive knowledge of wines from around the world, particularly Italian wines. 
   
@@ -161,6 +163,7 @@ Important instructions:
 15. For Product Bottle Production, estimate production numbers if not provided.
 16. For Product Philosophy, describe the winemaking approach.
 17. For Product Cork, specify the closure type (e.g., "Natural Cork").
+18. Translate the data into the following language: ${language}.
 
 Format your response as a JSON object with the missing fields as keys and your expert completions as values. For example:
 {
