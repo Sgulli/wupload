@@ -1,5 +1,9 @@
 {
-  "name": "wpload",
+  "name": "wupload",
+  "author": {
+    "name": "sgulli",
+    "url": "https://github.com/Sgulli"
+  },
   "version": "0.1.0",
   "private": true,
   "scripts": {
