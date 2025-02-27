@@ -72,8 +72,8 @@ export default function Home() {
 
               <div className="mt-4 border-t pt-4">
                 <p className="text-xs text-muted-foreground">
-                  Note: System automatically preserves IDs, image URLs, and
-                  other technical fields
+                  Warning: Generated data may contain inaccuracies or errors. It
+                  is recommended to verify the information carefully.
                 </p>
               </div>
             </CardContent>
