@@ -21,12 +21,10 @@ export async function processCSV(formData: FormData): Promise<string> {
     // Identify columns that should not be filled
     const protectedColumns = headers.filter(
       (header) =>
-        header.toLowerCase().includes('Product Thumbnail') ||
-        header.toLowerCase().includes('Product HS Code') ||
-        header.toLowerCase().includes('Product Prizes') ||
+        header.toLowerCase().includes('product thumbnail') ||
+        header.toLowerCase().includes('product hs code') ||
+        header.toLowerCase().includes('product prizes') ||
         header.toLowerCase().includes('handle') ||
-        header.toLowerCase().includes('uuid') ||
-        header.toLowerCase().includes('path') ||
         header.toLowerCase().includes('sku') ||
         header.toLowerCase().includes('barcode') ||
         header.toLowerCase().includes('inventory') ||
@@ -45,7 +43,9 @@ export async function processCSV(formData: FormData): Promise<string> {
         header.toLowerCase().includes('discountable') ||
         header.toLowerCase().includes('seller') ||
         header.toLowerCase().includes('variant is') ||
-        header.toLowerCase().includes('option')
+        header.toLowerCase().includes('option') ||
+        header.toLowerCase().includes('variant') ||
+        header.toLowerCase().includes('id')
     );
 
     // Process each row with missing data
