@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WUpload - Wine Data Enrichment Tool
+
+WUpload is a specialized tool for enriching wine data in CSV format. It uses AI to intelligently fill in missing information about wines based on existing data.
+
+## Features
+
+- **CSV Processing**: Upload your wine database CSV files and get them enriched with detailed wine information
+- **AI-Powered Enrichment**: Uses Google's Gemini AI model to generate accurate wine data
+- **Multi-language Support**: Generate wine descriptions in Italian, English, French, German, or Spanish
+- **CSV Preview**: View your data before processing to understand what will be enriched
+- **Field Highlighting**: Clearly see which fields will be filled by the AI
+- **Processing Summary**: Get statistics about how many fields were filled after processing
+- **Automatic Download**: Processed files are automatically downloaded when complete
+
+## How It Works
+
+1. **Upload Your CSV**: Drag and drop or select your wine database CSV file
+2. **Select Language**: Choose the language for the generated wine descriptions
+3. **Preview Data**: See which fields will be filled by the AI
+4. **Process**: Let our AI sommelier analyze and complete missing information
+5. **Download**: Get your enriched CSV file with completed wine details
+
+## Technical Details
+
+This application is built with:
+
+- Next.js 14 with App Router
+- Vercel AI SDK for AI integration
+- Google Gemini 2.0 Flash model for wine knowledge
+- PapaParse for CSV parsing
+- Tailwind CSS and shadcn/ui for the interface
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```bash
+npm install
+```
+
+Create a `.env` file with your API keys:
+
+```
+GOOGLE_API_KEY=your_google_api_key_here
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Example Data
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Check the `example` directory for sample CSV files that you can use to test the application.
 
-## Learn More
+## Protected Fields
 
-To learn more about Next.js, take a look at the following resources:
+The following fields are protected and will not be modified by the AI:
+- Product ID, Handle, SKU, Barcode
+- Inventory, Price, Weight, Dimensions
+- Status, Category, Sales Channel
+- And other non-wine specific metadata
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The easiest way to deploy this application is to use the [Vercel Platform](https://vercel.com/new).
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the MIT License.
