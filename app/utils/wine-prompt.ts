@@ -34,6 +34,9 @@ Important instructions:
 18. Translate ALL the data into ${language}. [MANDATORY]
 19. Ensure all information is factually accurate and consistent with the wine's origin, style, and quality level.
 20. If the wine is from a specific vintage, consider the characteristics of that year in the wine region.
+21. Avoid lists and bullet points.
+22. Use the same language for all the data.
+23. Write the most you know about the wine.
 
 Format your response as a JSON object with the missing fields as keys and your expert completions as values. For example:
 {

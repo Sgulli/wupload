@@ -2,7 +2,7 @@ import { removeJsonTemplate } from '@/lib/utils';
 import { generateText } from 'ai';
 import { google } from '@ai-sdk/google';
 import { createWinePrompt } from './wine-prompt';
-import { isProcessCancelled } from '../cancellation';
+import { isProcessInSet } from './cancellation-store';
 
 // Helper to check if row needs processing
 export function rowNeedsProcessing(row: Record<string, string>, headers: string[], protectedColumns: string[]): boolean {
@@ -82,7 +82,7 @@ export async function processRow(
 
   try {
     // Check for cancellation before AI call
-    if (isProcessCancelled(processId)) {
+    if (isProcessInSet(processId)) {
       throw new Error('CSV processing cancelled by user');
     }
 
@@ -98,10 +98,11 @@ export async function processRow(
       prompt: createWinePrompt(wineDescription, missingFields, language),
       abortSignal: abortController.signal
     });
+    
 
     return await applyAIResponse(row, headers, protectedColumns, aiResponse);
   } catch (err) {
-    if (isProcessCancelled(processId)) {
+    if (isProcessInSet(processId)) {
       throw new Error('CSV processing cancelled by user');
     }
     // For other errors, just use the original row

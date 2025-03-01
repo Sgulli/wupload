@@ -6,8 +6,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { parseCSV } from '@/lib/csv-utils';
 import { processCSV, cancelProcess, getCSVPreview } from '@/app/actions';
-import { identifyProtectedColumns } from '@/app/actions/helpers/protected-columns';
+import { identifyProtectedColumns } from '@/app/utils/protected-columns';
 import { Globe, Info } from 'lucide-react';
+import { SUPPORTED_LANGUAGES } from '@/components/ui/language-selector';
 
 // Import our new components
 import { FileUploader } from '@/components/upload/file-uploader';
@@ -92,13 +93,19 @@ export const useUploadForm = () => {
   return context;
 };
 
+// Helper function to map language code to full language name
+const mapLanguageCodeToName = (code: string): string => {
+  const language = SUPPORTED_LANGUAGES.find(lang => lang.code === code);
+  return language ? language.name : 'Italian'; // Default to Italian if not found
+};
+
 export default function UploadForm() {
   const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
-  const [csvLanguage, setCSVLanguage] = useState<string>('it');
+  const [csvLanguage, setCSVLanguage] = useState<string>('Italian');
   const [previewData, setPreviewData] = useState<{ headers: string[]; rows: Record<string, string>[] } | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [protectedColumns, setProtectedColumns] = useState<string[]>([]);
@@ -311,7 +318,7 @@ export default function UploadForm() {
       formData.append('language', csvLanguage);
 
       const response = await processCSV(formData);
-      setProcessId(response.processId || null);
+      setProcessId(response.processId ?? null);
 
       // Handle error or cancellation
       if (response.error) {
@@ -365,6 +372,11 @@ export default function UploadForm() {
     } else {
       resetForm();
     }
+  };
+
+  // Handler for language change
+  const handleLanguageChange = (langCode: string) => {
+    setCSVLanguage(mapLanguageCodeToName(langCode));
   };
 
   // Create context value
@@ -435,7 +447,7 @@ export default function UploadForm() {
                 <LanguageSelector 
                   defaultLang="it"
                   disabled={isUploading}
-                  onChange={setCSVLanguage}
+                  onChange={handleLanguageChange}
                   className="w-full"
                   triggerClassName="w-full"
                   affectsI18n={false}

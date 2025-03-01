@@ -1,44 +1,138 @@
 'use server';
 
-// This file is kept for backward compatibility
-// The code has been refactored and moved to more modular files in the actions/ directory
+import * as Papa from 'papaparse';
+import { identifyProtectedColumns } from './utils/protected-columns';
+import { processRow } from './utils/row-processing';
+import { cleanupProcessFromSet, addProcessToSet, isProcessInSet } from './utils/cancellation-store';
 
-// Import all required functions
-import { processCSV as _processCSV, cancelProcessing as _cancelProcessing } from './actions/csv-processing';
-import { getCSVPreview as _getCSVPreview } from './actions/preview';
-import { 
-  cancelProcess as _cancelProcess, 
-  isProcessCancelled as _isProcessCancelled, 
-  cleanupProcess as _cleanupProcess 
-} from './actions/cancellation';
-
-// Create wrapper for processCSV
-export async function processCSV(formData: FormData) {
-  return _processCSV(formData);
+// Generate a unique ID for each processing request
+function generateProcessId() {
+  return `process_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 }
 
-// Create wrapper for getCSVPreview
+// Get a preview of the CSV data without processing it
 export async function getCSVPreview(formData: FormData) {
-  return _getCSVPreview(formData);
+  console.log("👁️ GETTING CSV PREVIEW - This should happen when clicking the preview button.");
+  
+  try {
+    const file = formData.get('csv') as File;
+    
+    if (!file) {
+      return { error: 'No file provided' };
+    }
+
+    // Check if the file is a CSV
+    if (!file.name.endsWith('.csv')) {
+      return { error: 'File must be a CSV' };
+    }
+
+    // Parse the CSV file
+    const csvText = await file.text();
+    const parseResult = Papa.parse(csvText, {
+      header: true,
+      skipEmptyLines: true,
+    });
+
+    // Return a preview of the data (e.g., first 15 rows and headers)
+    return {
+      headers: parseResult.meta.fields || [],
+      rows: parseResult.data.slice(0, 15) as Record<string, string>[],
+      totalRows: parseResult.data.length
+    };
+  } catch (error) {
+    console.error('Error getting CSV preview:', error);
+    return { error: 'Failed to parse CSV file' };
+  }
 }
 
-// Create wrapper for cancelProcessing
-export async function cancelProcessing(processId: string) {
-  return _cancelProcessing(processId);
+// Process a CSV file
+export async function processCSV(formData: FormData) {
+  console.log("🔄 PROCESSING CSV - This should only happen when submitting the form, not when previewing.");
+  
+  try {
+    const file = formData.get('csv') as File;
+    const language = formData.get('language') as string || 'Italian';
+    
+    if (!file) {
+      return { error: 'No file provided' };
+    }
+
+    // Check if the file is a CSV
+    if (!file.name.endsWith('.csv')) {
+      return { error: 'File must be a CSV' };
+    }
+
+    // Parse the CSV file
+    const csvText = await file.text();
+    const parseResult = Papa.parse(csvText, {
+      header: true,
+      skipEmptyLines: true,
+    });
+
+    const headers = parseResult.meta.fields || [];
+    const rows = parseResult.data as Record<string, string>[];
+
+    // Generate a unique process ID
+    const processId = generateProcessId();
+
+    // Identify protected columns
+    const protectedColumns = identifyProtectedColumns(headers);
+
+    // Process rows
+    const processedRows = [];
+    for (let i = 0; i < rows.length; i++) {
+      // Check if the process was cancelled
+      if (isProcessInSet(processId)) {
+        console.log('Processing cancelled');
+        cleanupProcessFromSet(processId);
+        return { 
+          processId,
+          cancelled: true,
+          completedRows: i,
+          totalRows: rows.length
+        };
+      }
+
+      try {
+        const processedRow = await processRow(rows[i], headers, protectedColumns, language, processId);
+        processedRows.push(processedRow);
+      } catch (error) {
+        console.error(`Error processing row ${i}:`, error);
+        // Continue with the next row on error
+        processedRows.push(rows[i]);
+      }
+    }
+
+    // Generate CSV from processed rows
+    const csv = Papa.unparse({
+      fields: headers,
+      data: processedRows,
+    });
+
+    // Clean up the process ID
+    cleanupProcessFromSet(processId);
+
+    return {
+      processId,
+      csv,
+      completedRows: processedRows.length,
+      totalRows: rows.length
+    };
+
+  } catch (error) {
+    console.error('Error processing CSV:', error);
+    return { error: 'Failed to process CSV file' };
+  }
 }
 
-// Wrapper for non-async functions
-export async function cancelProcess(processId: string): Promise<void> {
-  _cancelProcess(processId);
-}
-
-export async function isProcessCancelled(processId: string): Promise<boolean> {
-  return _isProcessCancelled(processId);
-}
-
-export async function cleanupProcess(processId: string): Promise<void> {
-  _cleanupProcess(processId);
-}
-
-// The helper functions shouldn't be exported directly from a server action file
-// They should be imported directly from their source files when needed
+// Cancel a processing job
+export async function cancelProcess(processId: string) {
+  try {
+    console.log(`Cancelling process: ${processId}`);
+    addProcessToSet(processId);
+    return { success: true, message: 'Cancellation request received' };
+  } catch (error) {
+    console.error('Error cancelling processing:', error);
+    return { success: false, error: 'Failed to cancel processing' };
+  }
+} 

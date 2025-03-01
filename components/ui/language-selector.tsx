@@ -73,7 +73,7 @@ export default function LanguageSelectorComponent({
   contentClassName = '',
   disabled = false,
   compact = false,
-  defaultLang = 'it',
+  defaultLang = 'italian',
   onChange,
   affectsI18n = true,
 }: LanguageSelectorProps) {
