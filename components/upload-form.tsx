@@ -95,8 +95,8 @@ export const useUploadForm = () => {
 
 // Helper function to map language code to full language name
 const mapLanguageCodeToName = (code: string): string => {
-  const language = SUPPORTED_LANGUAGES.find(lang => lang.code === code);
-  return language ? language.name : 'Italian'; // Default to Italian if not found
+  const defaultLanguage = 'Italian';
+  return SUPPORTED_LANGUAGES.find(lang => lang.code === code)?.name ?? defaultLanguage;
 };
 
 export default function UploadForm() {
