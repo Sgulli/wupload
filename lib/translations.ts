@@ -1,7 +1,7 @@
 // English translations
 export const enTranslations = {
   common: {
-    title: 'Enrich Your Wine Data',
+    title: 'Enrich your wine data',
     languageSelector: 'Language',
     uploadTitle: 'Upload Your Wine Catalog',
     uploadDescription: 'Upload your CSV file to enrich it with AI-generated wine data',
