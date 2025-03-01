@@ -4,6 +4,8 @@ import { Roboto as FontSans, Young_Serif as FontSerif } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import './globals.css';
 import I18nProvider from '@/components/i18n-provider';
+import { getTranslations } from '@/lib/get-translations';
+import { cookies } from 'next/headers';
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -17,11 +19,23 @@ const fontSerif = FontSerif({
   weight: '400',
 });
 
-export const metadata: Metadata = {
-  title: 'WUpload - Wine Data Enrichment Tool',
-  description:
-    'Upload your wine CSV data and let our AI sommelier fill in the missing information',
-};
+// Dynamic metadata generation based on current locale
+export async function generateMetadata(): Promise<Metadata> {
+  // Read language preference from cookies
+  const cookieStore = cookies();
+  const langCookie = cookieStore.get('i18nextLng');
+  const locale = langCookie?.value || 'it'; // Default to Italian if no cookie
+  
+  // Get translations for the detected locale
+  const translations = getTranslations(locale);
+  
+  return {
+    title: 'WUpload - ' + translations.common.title,
+    description: translations.common.description,
+    authors: [{ name: 'Sgulli' }],
+    creator: 'Sgulli',
+  };
+}
 
 export default function RootLayout({
   children,
