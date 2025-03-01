@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Roboto as FontSans, Young_Serif as FontSerif } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import './globals.css';
+import I18nProvider from '@/components/i18n-provider';
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -29,7 +30,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head />
       <body
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
@@ -37,7 +37,13 @@ export default function RootLayout({
           fontSerif.variable
         )}
       >
-        {children}
+        <I18nProvider>
+          <div className="relative min-h-screen">
+            <main>
+              {children}
+            </main>
+          </div>
+        </I18nProvider>
       </body>
     </html>
   );
