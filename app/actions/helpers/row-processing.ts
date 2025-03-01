@@ -82,7 +82,7 @@ export async function processRow(
 
   try {
     // Check for cancellation before AI call
-    if (await isProcessCancelled(processId)) {
+    if (isProcessCancelled(processId)) {
       throw new Error('CSV processing cancelled by user');
     }
 
@@ -92,14 +92,16 @@ export async function processRow(
     // Use AI to fill in the missing data
     const abortController = new AbortController();
     const { text: aiResponse } = await generateText({
-      model: google('gemini-2.0-flash-exp'),
+      model: google('gemini-2.0-flash-exp', {
+        useSearchGrounding: true,
+      }),
       prompt: createWinePrompt(wineDescription, missingFields, language),
       abortSignal: abortController.signal
     });
 
     return await applyAIResponse(row, headers, protectedColumns, aiResponse);
   } catch (err) {
-    if (await isProcessCancelled(processId)) {
+    if (isProcessCancelled(processId)) {
       throw new Error('CSV processing cancelled by user');
     }
     // For other errors, just use the original row

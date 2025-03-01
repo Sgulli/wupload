@@ -47,9 +47,9 @@ export async function processCSV(formData: FormData) {
     const processedRows = [];
     for (let i = 0; i < rows.length; i++) {
       // Check if the process was cancelled
-      if (await isProcessCancelled(processId)) {
+      if (isProcessCancelled(processId)) {
         console.log('Processing cancelled');
-        await cleanupProcess(processId);
+        cleanupProcess(processId);
         return { 
           processId,
           cancelled: true,
@@ -75,7 +75,7 @@ export async function processCSV(formData: FormData) {
     });
 
     // Clean up the process ID
-    await cleanupProcess(processId);
+    cleanupProcess(processId);
 
     return {
       processId,
@@ -97,7 +97,7 @@ export async function cancelProcessing(processId: string) {
     
     // Import the cancellation function dynamically to avoid circular dependencies
     const { cancelProcess } = await import('./cancellation');
-    await cancelProcess(processId);
+    cancelProcess(processId);
     
     return { success: true, message: 'Cancellation request received' };
   } catch (error) {
