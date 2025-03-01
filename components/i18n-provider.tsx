@@ -60,10 +60,8 @@ export default function I18nProvider({
     }
   }, [initialized, router]);
 
-  // Always render the same structure to prevent hydration mismatches
-  // but use suppressHydrationWarning to prevent React errors
   return (
-    <div suppressHydrationWarning>
+    <div>
       <I18nextProvider i18n={i18n}>
         {children}
       </I18nextProvider>

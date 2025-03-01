@@ -134,7 +134,7 @@ export default function LanguageSelectorComponent({
           } : undefined}
         >
           <SelectValue>
-            <div className="flex items-center gap-2" suppressHydrationWarning>
+            <div className="flex items-center gap-2">
               <Globe className={`${compact ? 'size-3' : 'size-4'} ${disabled ? 'text-slate-400' : 'text-wine-500'}`} />
               <span className={`flex items-center gap-1 ${disabled ? 'text-slate-500' : ''}`}>
                 <span>{currentLang.flag}</span>
